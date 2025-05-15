@@ -1,6 +1,6 @@
 package javaapplication1.Model;
 
-public class Customer {
+public class Customer implements java.io.Serializable{
     private String id;
     private String name;
     private String phone;

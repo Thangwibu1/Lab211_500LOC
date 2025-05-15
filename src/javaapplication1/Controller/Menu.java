@@ -16,6 +16,6 @@ public class Menu {
         System.out.println("-----------------------------------------------------");
         System.out.print("Please choose an option: ");
 
-        return Inputer.inputInt("^[0-8]$");
+        return Inputer.inputInt("^[0-8]$", "");
     }
 }

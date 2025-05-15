@@ -5,39 +5,45 @@ import java.util.Scanner;
 public class Inputer {
     private static Scanner sc = new Scanner(System.in);
     //create method to input data
-    public static String inputString(String match) {
+    public static String inputString(String match, String message) {
         String result = "";
         do {
-            System.out.print("Enter value: ");
+            System.out.print(message);
             result = sc.nextLine();
         } while (!result.matches(match));
         return result;
     }
 
-    public static int inputInt(String match) {
+    public static int inputInt(String match, String message) {
         int number = 0;
-        try {
-            System.out.print("Enter value: ");
-            number = Integer.parseInt(sc.nextLine());
-            if(!Integer.toString(number).matches(match)) {
-                throw new NumberFormatException();
+        while (true) {
+            try {
+                System.out.print(message);
+                number = Integer.parseInt(sc.nextLine());
+                if(!Integer.toString(number).matches(match)) {
+                    throw new NumberFormatException();
+                }
+                break;
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a valid integer.");
             }
-        } catch (NumberFormatException e) {
-            System.out.println("Invalid input. Please enter a valid integer.");
         }
         return number;
     }
 
-    public static double inputDouble(String match) {
-        double number = 0;
-        try {
-            System.out.print("Enter value: ");
-            number = Double.parseDouble(sc.nextLine());
-            if(!Double.toString(number).matches(match)) {
-                throw new NumberFormatException();
+    public static double inputDouble(String match, String message) {
+        double number = 0.0;
+        while (true) {
+            try {
+                System.out.print(message);
+                number = Double.parseDouble(sc.nextLine());
+                if(!Double.toString(number).matches(match)) {
+                    throw new NumberFormatException();
+                }
+                break;
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a valid integer.");
             }
-        } catch (NumberFormatException e) {
-            System.out.println("Invalid input. Please enter a valid integer.");
         }
         return number;
     }

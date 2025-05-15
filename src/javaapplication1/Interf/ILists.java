@@ -1,5 +1,8 @@
 package javaapplication1.Interf;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 public interface ILists<T> {
     //add new Customer or order
     public boolean addNew(T t);
@@ -12,6 +15,6 @@ public interface ILists<T> {
 
     //show all infor
     public void showAll();
-    public boolean readFromFile();
+    public boolean readFromFile() throws FileNotFoundException, IOException;
     public boolean saveToFile();
 }

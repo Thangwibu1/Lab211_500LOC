@@ -12,22 +12,44 @@ public class CustomerList extends ArrayList<Customer> implements ILists<Customer
 
     @Override
     public boolean addNew(Customer customer) {
-        return false;
+        // Kiểm tra xem danh sách đã có khách hàng chưa
+        this.add(customer);
+        return true;
     }
 
     @Override
     public boolean update(Customer customer) {
+        Customer search = searchById(customer.getId());
+        if (search != null) {
+            // Cập nhật thông tin khách hàng
+            search.setName(customer.getName());
+            search.setPhone(customer.getPhone());
+            search.setEmail(customer.getEmail());
+            return true;
+        }
         return false;
     }
 
     @Override
     public Customer searchById(String id) {
+        for (Customer customer : this) {
+            if (customer.getId().equals(id)) {
+                return customer;
+            }
+        }
         return null;
     }
 
     @Override
     public void showAll() {
-
+        if (this.size() == 0) {
+            System.out.println("Danh sách khách hàng rỗng.");
+        } else {
+            System.out.println("Danh sách khách hàng:");
+            for (Customer customer : this) {
+                System.out.println(customer);
+            }
+        }
     }
 
     //read from file
@@ -35,50 +57,79 @@ public class CustomerList extends ArrayList<Customer> implements ILists<Customer
     public boolean readFromFile() {
         boolean check = false;
         File file = new File(pathFile);
-        // Kiểm tra xem file có tồn tại không
+
         if (!file.exists()) {
-            try (FileOutputStream fos = new FileOutputStream(file)) {
-                System.out.println("File mới đã được tạo!");
+            try {
+                file.createNewFile();
+                return true; // New empty file created successfully
             } catch (IOException e) {
-                e.printStackTrace();
+                System.err.println("Failed to create new file: " + e.getMessage());
+                return false;
             }
-            return check;
         }
-        // Đường dẫn đến file .dat
-        try {
-            // Tạo FileInputStream để đọc từ file .dat
-            FileInputStream fileIn = new FileInputStream(pathFile);
 
-            // Tạo ObjectInputStream để đọc đối tượng
-            ObjectInputStream objectIn = new ObjectInputStream(fileIn);
+        // Kiểm tra nếu file rỗng
+        if (file.length() == 0) {
+            return true; // File trống không có gì để đọc
+        }
 
-            // Đọc các đối tượng từ file
+        try (FileInputStream fileIn = new FileInputStream(pathFile);
+             ObjectInputStream objectIn = new ObjectInputStream(fileIn)) {
+
             try {
                 while (true) {
-                    // Đọc đối tượng và ép kiểu
-                    CustomerList customer = (CustomerList) objectIn.readObject();
-                    this.addAll(customer);
-                    System.out.println("Đã đọc: " + customer);
+                    Customer customer = (Customer) objectIn.readObject();
+                    this.add(customer);
                 }
             } catch (EOFException e) {
-                // Khi đọc hết file, EOFException sẽ được ném ra
-                System.out.println("Đã đọc hết file");
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+                // Đây là cách thông thường để phát hiện kết thúc của stream khi đọc các đối tượng
+                // Không cần xử lý gì, đây là điều kiện thoát bình thường từ vòng lặp
             }
+            check = true;
 
-            // Đóng các streams
-            objectIn.close();
-            fileIn.close();
-
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
+            System.err.println("Class not found: " + e.getMessage());
+            e.printStackTrace();
+        } catch (InvalidClassException e) {
+            System.err.println("Invalid class format: " + e.getMessage());
+            e.printStackTrace();
+        } catch (StreamCorruptedException e) {
+            System.err.println("Corrupted stream: " + e.getMessage());
+            e.printStackTrace();
+        } catch (IOException e) {
+            System.err.println("IO error: " + e.getMessage());
             e.printStackTrace();
         }
-        return true;
+
+        return check;
     }
 
     @Override
     public boolean saveToFile() {
-        return false;
+        boolean check = false;
+        try (FileOutputStream fileOut = new FileOutputStream(pathFile);
+             ObjectOutputStream objectOut = new ObjectOutputStream(fileOut)) {
+
+            // Giả sử class hiện tại implement Iterable<Customer> hoặc extend Collection<Customer>
+            for (Customer customer : this) {
+                if (customer == null) {
+                    System.err.println("Warning: Skipping null customer");
+                    continue;
+                }
+                objectOut.writeObject(customer);
+            }
+            objectOut.flush(); // Đảm bảo dữ liệu được ghi xuống
+            check = true;
+
+        } catch (NotSerializableException e) {
+            System.err.println("Lỗi: Customer class hoặc một trong các thuộc tính của nó không implement Serializable");
+            System.err.println("Class gây lỗi: " + e.getMessage());
+            e.printStackTrace();
+        } catch (IOException e) {
+            System.err.println("Lỗi IO khi lưu: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return check;
     }
 }
