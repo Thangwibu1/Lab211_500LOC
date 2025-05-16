@@ -40,6 +40,16 @@ public class CustomerList extends ArrayList<Customer> implements ILists<Customer
         return null;
     }
 
+    //search by ID but return boolean
+    public boolean searchByIdReturnBoolean(String id) {
+        for (Customer customer : this) {
+            if (customer.getId().equals(id)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public void showAll() {
         if (this.size() == 0) {
@@ -75,7 +85,7 @@ public class CustomerList extends ArrayList<Customer> implements ILists<Customer
 
         try (FileInputStream fileIn = new FileInputStream(pathFile);
              ObjectInputStream objectIn = new ObjectInputStream(fileIn)) {
-
+            this.clear();
             try {
                 while (true) {
                     Customer customer = (Customer) objectIn.readObject();
@@ -113,7 +123,6 @@ public class CustomerList extends ArrayList<Customer> implements ILists<Customer
             // Giả sử class hiện tại implement Iterable<Customer> hoặc extend Collection<Customer>
             for (Customer customer : this) {
                 if (customer == null) {
-                    System.err.println("Warning: Skipping null customer");
                     continue;
                 }
                 objectOut.writeObject(customer);

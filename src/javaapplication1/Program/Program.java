@@ -21,8 +21,7 @@ public class Program {
                     customers.readFromFile();
                     customers.showAll();
                     System.out.println("Register new customer");
-                    System.out.print("Enter customer ID: ");
-                    String id = Inputer.inputString("^[CKG][0-9]{3}$", "");
+                    String id = Inputer.inputString("^[CKG][0-9]{3}$", "Enter customer ID: ");
                     System.out.print("Enter customer name: ");
                     String name = Inputer.inputString("^[A-Za-z ]+$", "");
                     System.out.print("Enter customer phone: ");
