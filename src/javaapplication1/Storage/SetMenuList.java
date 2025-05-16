@@ -19,9 +19,24 @@ public class SetMenuList extends ArrayList<SetMenu> implements ILists<SetMenu> {
 
     @Override
     public SetMenu searchById(String id) {
+        // Tìm kiếm thực đơn theo ID
+        for (SetMenu setMenu : this) {
+            if (setMenu.getMenuId().equals(id)) {
+                return setMenu;
+            }
+        }
         return null;
     }
 
+    // Tìm kiếm thực đơn theo ID nhưng trả về boolean
+    public boolean searchByIdReturnBoolean(String id) {
+        for (SetMenu setMenu : this) {
+            if (setMenu.getMenuId().equals(id)) {
+                return true;
+            }
+        }
+        return false;
+    }
     @Override
     public void showAll() {
         // Hiển thị danh sách thực đơn

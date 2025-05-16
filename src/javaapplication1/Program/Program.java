@@ -3,10 +3,17 @@ package javaapplication1.Program;
 import javaapplication1.Controller.Inputer;
 import javaapplication1.Controller.Menu;
 import javaapplication1.Model.Customer;
+import javaapplication1.Model.Order;
+import javaapplication1.Model.SetMenu;
 import javaapplication1.Storage.CustomerList;
+import javaapplication1.Storage.OrderList;
 import javaapplication1.Storage.SetMenuList;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 public class Program {
     //create global variables
@@ -15,12 +22,25 @@ public class Program {
     static String phone;
     static String email;
 
+    //create variable for order
+    static String orderId;
+    static String customerId;
+    static String setMenuId;
+    static int numberOfTable;
+    static String date;
+    static String totalPrice;
+    static Customer orderCustomer;
+    static SetMenu orderSetMenu;
+
     public static void main(String[] args) throws IOException {
         CustomerList customers = new CustomerList();
         SetMenuList setMenu = new SetMenuList();
-
+        OrderList orders = new OrderList();
+        Order order;
         Menu menu = new Menu();
+        orders.readFromFile();
         customers.readFromFile();
+        setMenu.readFromFile();
         while(true) {
             int choose = menu.showMenu();
             switch (choose) {
@@ -107,12 +127,66 @@ public class Program {
                     }
                     break;
                 case 4:
-                    setMenu.readFromFile();
+
                     setMenu.showAll();
                     // Display feast menu
                     break;
                 case 5:
-                    // Place a feast order
+                    //create orderId
+                    orders.showAll();
+                    Date currentDate = new Date();
+                    System.out.println("---------------Place a feast order---------------");
+                    SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyyHHmmss");
+                    String formattedDate = sdf.format(currentDate);
+                    orderId = formattedDate;
+
+                    //handle customer ID
+                    customers.showAll();
+                    while (true) {
+                        customerId = Inputer.inputString("^[CKG][0-9]{3}$", "Enter customer ID: ");
+                        //check exits
+                        if (!customers.searchByIdReturnBoolean(customerId)) {
+                            System.out.println("Customer not found!!!");
+                            continue;
+                        }
+                        orderCustomer = customers.searchById(customerId);
+                        break;
+                    }
+
+                    //handle set menu ID
+                    setMenu.showAll();
+                    while (true) {
+                        setMenuId = Inputer.inputString("^PW[0-9]{3}$", "Enter set menu ID: ");
+                        //check exits
+                        if (!setMenu.searchByIdReturnBoolean(setMenuId)) {
+                            System.out.println("Set menu not found!!!");
+                            continue;
+                        }
+                        orderSetMenu = setMenu.searchById(setMenuId);
+                        break;
+                    }
+                    //handle number of table
+                    numberOfTable = Inputer.inputInt("^[1-9][0-9]*$", "Enter number of table: ");
+
+                    //handle order date
+                    LocalDate localDate = LocalDate.now();
+                    while (true) {
+                        LocalDate futureDate = LocalDate.parse(Inputer.inputString("^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$", "Enter order date (yyyy-MM-dd): "));
+                        if (futureDate.isBefore(localDate)) {
+                            System.out.println("Order date must be in the future!!!");
+                            continue;
+                        } else {
+                            date = futureDate.toString();
+                            break;
+                        }
+                    }
+
+                    //handle total price
+                    totalPrice = numberOfTable * orderSetMenu.getPrice() + "";
+                    //create order
+                    order = new Order(orderId, orderCustomer, orderSetMenu, numberOfTable, date, totalPrice);
+                    //add order to list
+                    orders.addNew(order);
                     break;
                 case 6:
                     // Update order information
@@ -134,6 +208,7 @@ public class Program {
                 String saveChoice = Inputer.inputString("^[YyNn]$", "Do you want to save data to file? (Y/N): ");
                 if(saveChoice.equalsIgnoreCase("y")) {
                     customers.saveToFile();
+                    orders.saveToFile();
                     System.out.println("Data saved successfully.");
                     System.out.println("Goodbye!");
                 } else {

@@ -1,9 +1,10 @@
 package javaapplication1.Model;
 
-public class Order {
+
+public class Order implements java.io.Serializable{
     String orderId;
-    String customerId;
-    String menuId;
+    Customer customer;
+    SetMenu menu;
     int numberOfTable;
     String orderDate;
     String totalePrice;
@@ -11,18 +12,18 @@ public class Order {
     //default constructor
     public Order() {
         this.orderId = "";
-        this.customerId = "";
-        this.menuId = "";
+        this.customer = null;
+        this.menu = null;
         this.numberOfTable = 0;
         this.orderDate = "";
         this.totalePrice = "";
     }
 
     //constructor reference
-    public Order(String orderId, String customerId, String menuId, int numberOfTable, String orderDate, String totalePrice) {
+    public Order(String orderId, Customer customer, SetMenu menu, int numberOfTable, String orderDate, String totalePrice) {
         this.orderId = orderId;
-        this.customerId = customerId;
-        this.menuId = menuId;
+        this.customer = customer;
+        this.menu = menu;
         this.numberOfTable = numberOfTable;
         this.orderDate = orderDate;
         this.totalePrice = totalePrice;
@@ -38,20 +39,20 @@ public class Order {
         this.orderId = orderId;
     }
 
-    public String getCustomerId() {
-        return customerId;
+    public Customer getCustomer() {
+        return customer;
     }
 
-    public void setCustomerId(String customerId) {
-        this.customerId = customerId;
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
-    public String getMenuId() {
-        return menuId;
+    public SetMenu getMenu() {
+        return menu;
     }
 
-    public void setMenuId(String menuId) {
-        this.menuId = menuId;
+    public void setMenu(SetMenu menu) {
+        this.menu = menu;
     }
 
     public int getNumberOfTable() {
@@ -80,5 +81,19 @@ public class Order {
 
 
     //show information
-    
+
+    public void showInfo() {
+        System.out.printf("-----------------------------------------------------------------------\n");
+        System.out.println("Order ID: " + orderId);
+        System.out.println("----------------------------------------------------------------------");
+        customer.showInfo();
+        System.out.println("----------------------------------------------------------------------");
+        menu.showInfo();
+        System.out.println("Number of table: " + numberOfTable);
+        System.out.println("Order date: " + orderDate);
+
+        System.out.println("----------------------------------------------------------------------");
+        System.out.println("Total price: " + totalePrice);
+        System.out.println("----------------------------------------------------------------------");
+    }
 }

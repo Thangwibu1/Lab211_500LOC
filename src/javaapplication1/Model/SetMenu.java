@@ -1,6 +1,6 @@
 package javaapplication1.Model;
 
-public class SetMenu {
+public class SetMenu implements java.io.Serializable {
     String menuId;
     String menuName;
     double price;
@@ -70,4 +70,5 @@ public class SetMenu {
         System.out.println("Ingredients: " + ingredients);
         System.out.println("------------------------------------------------------------------------------");
     }
+
 }

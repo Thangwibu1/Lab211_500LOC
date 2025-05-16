@@ -4,12 +4,15 @@ import javaapplication1.Model.Order;
 import javaapplication1.Model.SetMenu;
 import javaapplication1.Model.Customer;
 
+import java.io.*;
 import java.util.ArrayList;
 
 public class OrderList extends ArrayList<Order> implements ILists<Order> {
+    String pathFile = "orderlist.dat";
     @Override
     public boolean addNew(Order order) {
-        return false;
+        this.add(order);
+        return true;
     }
 
     @Override
@@ -24,16 +27,87 @@ public class OrderList extends ArrayList<Order> implements ILists<Order> {
 
     @Override
     public void showAll() {
-
+        for (Order order : this) {
+            order.showInfo();
+        }
     }
 
     @Override
-    public boolean readFromFile() {
-        return false;
+    public boolean readFromFile() throws IOException {
+        boolean check = false;
+        File file = new File(pathFile);
+        // Kiểm tra xem file có tồn tại không
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+                return true;
+            } catch (IOException e) {
+                System.out.println("Error creating file: " + e.getMessage());
+                e.printStackTrace();
+                return false;
+            }
+        }
+
+        // Kiểm tra xem file có rỗng không
+        if (file.length() == 0) {
+            System.out.println("File is empty.");
+            return true;
+        }
+        // Đọc file
+        try(FileInputStream fileIn = new FileInputStream(pathFile);
+            ObjectInputStream objectIn = new ObjectInputStream(fileIn)) {
+            this.clear();
+            try {
+                while (true) {
+                    Order order = (Order) objectIn.readObject();
+                    this.add(order);
+                }
+            } catch (EOFException e) {
+
+            }
+            check = true;
+
+        } catch (ClassNotFoundException e) {
+            System.err.println("Class not found: " + e.getMessage());
+            e.printStackTrace();
+        } catch (InvalidClassException e) {
+            System.err.println("Invalid class format: " + e.getMessage());
+            e.printStackTrace();
+        } catch (StreamCorruptedException e) {
+            System.err.println("Corrupted stream: " + e.getMessage());
+            e.printStackTrace();
+        } catch (IOException e) {
+            System.err.println("IO error: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return check;
     }
 
     @Override
     public boolean saveToFile() {
-        return false;
+        boolean check = false;
+        try (FileOutputStream fileOut = new FileOutputStream(pathFile);
+             ObjectOutputStream objectOut = new ObjectOutputStream(fileOut)) {
+
+            // Giả sử class hiện tại implement Iterable<Customer> hoặc extend Collection<Customer>
+            for (Order order : this) {
+                if (order == null) {
+                    continue;
+                }
+                objectOut.writeObject(order);
+            }
+            objectOut.flush(); // Đảm bảo dữ liệu được ghi xuống
+            check = true;
+
+        } catch (NotSerializableException e) {
+            System.err.println("Lỗi: Customer class hoặc một trong các thuộc tính của nó không implement Serializable");
+            System.err.println("Class gây lỗi: " + e.getMessage());
+            e.printStackTrace();
+        } catch (IOException e) {
+            System.err.println("Lỗi IO khi lưu: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return check;
     }
 }
