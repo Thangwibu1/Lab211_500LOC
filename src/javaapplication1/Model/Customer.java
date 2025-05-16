@@ -63,9 +63,9 @@ public class Customer implements java.io.Serializable{
 
     //show information
     public void showInfo() {
-        System.out.println("Customer ID: " + id);
-        System.out.println("Customer Name: " + name);
-        System.out.println("Customer Phone: " + phone);
-        System.out.println("Customer Email: " + email);
+        System.out.println("| Customer ID: " + id);
+        System.out.println("| Customer Name: " + name);
+        System.out.println("| Customer Phone: " + phone);
+        System.out.println("| Customer Email: " + email);
     }
 }

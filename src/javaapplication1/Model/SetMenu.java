@@ -64,10 +64,10 @@ public class SetMenu implements java.io.Serializable {
 
     //show information
     public void showInfo() {
-        System.out.println("Menu ID: " + menuId);
-        System.out.println("Menu Name: " + menuName);
-        System.out.println("Price: " + price);
-        System.out.println("Ingredients: " + ingredients);
+        System.out.println("| Menu ID: " + menuId);
+        System.out.println("| Menu Name: " + menuName);
+        System.out.println("| Price: " + price);
+        System.out.println("| Ingredients: " + ingredients);
         System.out.println("------------------------------------------------------------------------------");
     }
 

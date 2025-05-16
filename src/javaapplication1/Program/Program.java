@@ -22,6 +22,7 @@ public class Program {
     static String phone;
     static String email;
 
+    static boolean checkSave = false;
     //create variable for order
     static String orderId;
     static String customerId;
@@ -41,7 +42,7 @@ public class Program {
         orders.readFromFile();
         customers.readFromFile();
         setMenu.readFromFile();
-        while(true) {
+        while (true) {
             int choose = menu.showMenu();
             switch (choose) {
                 case 1:
@@ -187,14 +188,65 @@ public class Program {
                     order = new Order(orderId, orderCustomer, orderSetMenu, numberOfTable, date, totalPrice);
                     //add order to list
                     orders.addNew(order);
+                    //free memory
+                    orderId = customerId = setMenuId = null;
+                    numberOfTable = 0;
+                    date = totalPrice = null;
+
                     break;
                 case 6:
                     // Update order information
+                    orders.showAll();
+                    String updateOrderId = Inputer.inputString("^[0-9]{14}$", "Enter order ID to update: ");
+                    //check exits
+                    if (!orders.searchByIdReturnBoolean(updateOrderId)) {
+                        System.out.println("Order not found!!!");
+                        break;
+                    }
+                    //handle customer ID
+                    Customer customerUpdate = orders.searchById(updateOrderId).getCustomer();
+                    //handle set menu ID
+                    SetMenu setMenuUpdate = orders.searchById(updateOrderId).getMenu();
+                    //handle number of table
+                    numberOfTable = Inputer.inputInt("^[1-9][0-9]*$", "Enter number of table update: ");
+                    //handle order date
+                    LocalDate newDate = LocalDate.now();
+                    while (true) {
+                        LocalDate futureDate = LocalDate.parse(Inputer.inputString("^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$", "Enter order date (yyyy-MM-dd): "));
+                        if (futureDate.isBefore(newDate)) {
+                            System.out.println("Order date must be in the future!!!");
+                            continue;
+                        } else {
+                            date = futureDate.toString();
+                            break;
+                        }
+                    }
+                    //handle total price
+                    totalPrice = numberOfTable * setMenuUpdate.getPrice() + "";
+                    //create order
+                    order = new Order(updateOrderId, customerUpdate, setMenuUpdate, numberOfTable, date, totalPrice);
+                    //update order to list
+                    orders.update(order);
+                    //free memory
+                    updateOrderId = customerId = setMenuId = null;
+                    numberOfTable = 0;
+                    date = totalPrice = null;
                     break;
                 case 7:
+                    customers.saveToFile();
+                    orders.saveToFile();
+                    System.out.println("Data saved successfully.");
+                    System.out.println("Goodbye!");
+                    checkSave = true;
                     // Save data to file
                     break;
                 case 8:
+                    String listChoice = Inputer.inputString("^[OoCc]$", "Do you want to display customer list (C) or order list (O)? ");
+                    if (listChoice.equalsIgnoreCase("c")) {
+                        customers.showAll();
+                    } else if (listChoice.equalsIgnoreCase("o")) {
+                        orders.showAll();
+                    }
                     // Display Customer or Order lists
                     break;
                 case 0:
@@ -204,16 +256,19 @@ public class Program {
                     return;
             }
             String choice = Inputer.inputString("^[YyNn]$", "Do you want to continue? (Y/N): ");
-            if(!choice.equalsIgnoreCase("y")) {
-                String saveChoice = Inputer.inputString("^[YyNn]$", "Do you want to save data to file? (Y/N): ");
-                if(saveChoice.equalsIgnoreCase("y")) {
-                    customers.saveToFile();
-                    orders.saveToFile();
-                    System.out.println("Data saved successfully.");
-                    System.out.println("Goodbye!");
-                } else {
-                    System.out.println("Data not saved.");
-                    System.out.println("Goodbye!");
+            if (!choice.equalsIgnoreCase("y")) {
+                if (!checkSave) {
+                    String saveChoice = Inputer.inputString("^[YyNn]$", "Do you want to save data to file? (Y/N): ");
+                    if (saveChoice.equalsIgnoreCase("y")) {
+                        customers.saveToFile();
+                        orders.saveToFile();
+                        System.out.println("Data saved successfully.");
+                        System.out.println("Goodbye!");
+                    } else {
+                        System.out.println("Data not saved.");
+                        System.out.println("Goodbye!");
+                    }
+                    break;
                 }
                 break;
             }

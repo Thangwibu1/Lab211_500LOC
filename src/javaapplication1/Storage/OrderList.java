@@ -17,12 +17,34 @@ public class OrderList extends ArrayList<Order> implements ILists<Order> {
 
     @Override
     public boolean update(Order order) {
+        Order search = searchById(order.getOrderId());
+        if (search != null) {
+            // Cập nhật thông tin đơn hàng
+            search.setNumberOfTable(order.getNumberOfTable());
+            search.setOrderDate(order.getOrderDate());
+            search.setTotalePrice(order.getTotalePrice());
+            return true;
+        }
         return false;
     }
 
     @Override
     public Order searchById(String id) {
+        for (Order order : this) {
+            if (order.getOrderId().equals(id)) {
+                return order;
+            }
+        }
         return null;
+    }
+    // Tìm kiếm theo ID nhưng trả về boolean
+    public boolean searchByIdReturnBoolean(String id) {
+        for (Order order : this) {
+            if (order.getOrderId().equals(id)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

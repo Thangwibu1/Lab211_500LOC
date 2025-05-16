@@ -83,17 +83,17 @@ public class Order implements java.io.Serializable{
     //show information
 
     public void showInfo() {
-        System.out.printf("-----------------------------------------------------------------------\n");
-        System.out.println("Order ID: " + orderId);
-        System.out.println("----------------------------------------------------------------------");
+        System.out.println("------------------------------------------------------------------------");
+        System.out.println("| Order ID: " + orderId);
+        System.out.println("| ----------------------------------------------------------------------");
         customer.showInfo();
-        System.out.println("----------------------------------------------------------------------");
+        System.out.println("| ----------------------------------------------------------------------");
         menu.showInfo();
-        System.out.println("Number of table: " + numberOfTable);
-        System.out.println("Order date: " + orderDate);
+        System.out.println("| Number of table: " + numberOfTable);
+        System.out.println("| Order date: " + orderDate);
 
-        System.out.println("----------------------------------------------------------------------");
-        System.out.println("Total price: " + totalePrice);
+        System.out.println("| ----------------------------------------------------------------------");
+        System.out.println("|Total price: " + totalePrice);
         System.out.println("----------------------------------------------------------------------");
     }
 }

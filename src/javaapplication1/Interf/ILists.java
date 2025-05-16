@@ -13,6 +13,8 @@ public interface ILists<T> {
     //search Customer or order by id
     public T searchById(String id);
 
+    //search by ID but return boolean
+    public boolean searchByIdReturnBoolean(String id);
     //show all infor
     public void showAll();
     public boolean readFromFile() throws FileNotFoundException, IOException;
