@@ -68,5 +68,6 @@ public class SetMenu {
         System.out.println("Menu Name: " + menuName);
         System.out.println("Price: " + price);
         System.out.println("Ingredients: " + ingredients);
+        System.out.println("------------------------------------------------------------------------------");
     }
 }

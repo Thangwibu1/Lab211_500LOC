@@ -9,6 +9,12 @@ import javaapplication1.Storage.SetMenuList;
 import java.io.IOException;
 
 public class Program {
+    //create global variables
+    static String id;
+    static String name;
+    static String phone;
+    static String email;
+
     public static void main(String[] args) throws IOException {
         CustomerList customers = new CustomerList();
         SetMenuList setMenu = new SetMenuList();
@@ -22,20 +28,38 @@ public class Program {
 
                     customers.showAll();
                     System.out.println("---------------Register new customer---------------");
-                    String id = Inputer.inputString("^[CKG][0-9]{3}$", "Enter customer ID: ");
-                    System.out.print("Enter customer name: ");
-                    String name = Inputer.inputString("^[A-Za-z ]+$", "");
+                    //enter identification
+                    while (true) {
+                        id = Inputer.inputString("^[CKG][0-9]{3}$", "Enter customer ID: ");
+                        //check exits
+                        if (customers.searchByIdReturnBoolean(id)) {
+                            System.out.println("Customer ID already exists!!!");
+                            continue;
+                        }
+                        break;
+                    }
+                    //enter name
+                    while (true) {
+                        name = Inputer.inputString("^[A-Za-z ]+$", "Enter customer name: ");
+                        if (name.length() < 2 || name.length() > 25) {
+                            System.out.println("Name must be between 2 and 25 characters!");
+                            continue;
+                        } else {
+                            break;
+                        }
+                    }
                     System.out.print("Enter customer phone: ");
-                    String phone = Inputer.inputString("^[0-9]{10}$", "");
+                    phone = Inputer.inputString("^0[0-9]{9}$", "");
                     System.out.print("Enter customer email: ");
-                    String email = Inputer.inputString("^[a-zA-Z0-9._%+-]+@gmail\\.com$", "");
+                    email = Inputer.inputString("^[a-zA-Z0-9._%+-]+@gmail\\.com$", "");
 
                     //new customer
                     Customer customer = new Customer(id, name, phone, email);
                     //add customer to list
                     customers.addNew(customer);
                     //save customer to file
-
+                    //free memory
+                    id = name = phone = email = null;
                     // Register customer
                     break;
                 case 2:
@@ -48,16 +72,39 @@ public class Program {
                         break;
                     }
                     //enter filed
-                    String updateName = Inputer.inputString("^[A-Za-z ]+$", "Enter new customer name: ");
-                    String updatePhone = Inputer.inputString("^[0-9]{10}$", "Enter new customer phone: ");
-                    String updateEmail = Inputer.inputString("^[a-zA-Z0-9._%+-]+@gmail\\.com$", "Enter new customer email: ");
+                    while (true) {
+                        name = Inputer.inputString("^[A-Za-z ]+$", "Enter customer name: ");
+                        if (name.length() < 2 || name.length() > 25) {
+                            System.out.println("Name must be between 2 and 25 characters!");
+                            continue;
+                        } else {
+                            break;
+                        }
+                    }
+                    System.out.print("Enter customer phone: ");
+                    phone = Inputer.inputString("^0[0-9]{9}$", "");
+                    System.out.print("Enter customer email: ");
+                    email = Inputer.inputString("^[a-zA-Z0-9._%+-]+@gmail\\.com$", "");
 
                     // Update customer information
-                    Customer updateCustomer = new Customer(updateId, updateName, updatePhone, updateEmail);
-                    customers.update(updateCustomer);
+                    customer = new Customer(updateId, name, phone, email);
+                    customers.update(customer);
+
+                    //free memory
+                    updateId = name = phone = email = null;
                     break;
                 case 3:
                     // Search customer by ID
+                    customers.showAll();
+                    id = Inputer.inputString("^[CKG][0-9]{3}$", "Enter customer ID to search: ");
+                    //check exits
+                    if (!customers.searchByIdReturnBoolean(id)) {
+                        System.out.println("Customer not found!!!");
+                        break;
+                    } else {
+                        Customer customerFound = customers.searchById(id);
+                        System.out.println(customerFound);
+                    }
                     break;
                 case 4:
                     setMenu.readFromFile();

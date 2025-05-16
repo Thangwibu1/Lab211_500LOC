@@ -26,11 +26,13 @@ public class SetMenuList extends ArrayList<SetMenu> implements ILists<SetMenu> {
     public void showAll() {
         // Hiển thị danh sách thực đơn
         if (this.size() == 0) {
-            System.out.println("Danh sách thực đơn rỗng.");
+            System.out.println("Empy list of Feast Menu.");
         } else {
-            System.out.println("Danh sách thực đơn:");
+            System.out.println("-----------------------------------------------------------------");
+            System.out.println("List for Feast Menu ordering party");
+            System.out.println("-----------------------------------------------------------------");
             for (SetMenu setMenu : this) {
-                System.out.println(setMenu);
+                setMenu.showInfo();
             }
         }
     }
@@ -38,6 +40,13 @@ public class SetMenuList extends ArrayList<SetMenu> implements ILists<SetMenu> {
     @Override
     public boolean readFromFile() {
         String csvFile = "FeastMenu.csv";
+        File file = new File(csvFile);
+        // Kiểm tra xem file có tồn tại không
+        if (!file.exists()) {
+            System.out.println("File " + csvFile + " does not exist.");
+            return false;
+        }
+        // Đọc file CSV
         this.clear();
         try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
             // Đọc tiêu đề nếu có
