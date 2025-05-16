@@ -77,7 +77,6 @@ public class CustomerList extends ArrayList<Customer> implements ILists<Customer
                 return false;
             }
         }
-
         // Kiểm tra nếu file rỗng
         if (file.length() == 0) {
             return true; // File trống không có gì để đọc
@@ -97,17 +96,7 @@ public class CustomerList extends ArrayList<Customer> implements ILists<Customer
             }
             check = true;
 
-        } catch (ClassNotFoundException e) {
-            System.err.println("Class not found: " + e.getMessage());
-            e.printStackTrace();
-        } catch (InvalidClassException e) {
-            System.err.println("Invalid class format: " + e.getMessage());
-            e.printStackTrace();
-        } catch (StreamCorruptedException e) {
-            System.err.println("Corrupted stream: " + e.getMessage());
-            e.printStackTrace();
-        } catch (IOException e) {
-            System.err.println("IO error: " + e.getMessage());
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

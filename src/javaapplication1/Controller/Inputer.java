@@ -15,10 +15,12 @@ public class Inputer {
                 System.out.print(message);
                 flag++;
             } else {
-                System.out.print("Invalid input. Please try again: ");
+                System.out.println("Invalid input!");
+                System.out.print(message);
             }
+
             result = sc.nextLine();
-        } while (!result.matches(match) || result.isEmpty());
+        } while (!result.matches(match) || result.trim().isEmpty());
         return result;
     }
 

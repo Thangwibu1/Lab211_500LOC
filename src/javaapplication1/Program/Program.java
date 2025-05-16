@@ -39,6 +39,7 @@ public class Program {
         OrderList orders = new OrderList();
         Order order;
         Menu menu = new Menu();
+        //methods
         orders.readFromFile();
         customers.readFromFile();
         setMenu.readFromFile();
@@ -78,7 +79,6 @@ public class Program {
                     Customer customer = new Customer(id, name, phone, email);
                     //add customer to list
                     customers.addNew(customer);
-                    //save customer to file
                     //free memory
                     id = name = phone = email = null;
                     // Register customer
@@ -260,10 +260,11 @@ public class Program {
                 if (!checkSave) {
                     String saveChoice = Inputer.inputString("^[YyNn]$", "Do you want to save data to file? (Y/N): ");
                     if (saveChoice.equalsIgnoreCase("y")) {
-                        customers.saveToFile();
-                        orders.saveToFile();
-                        System.out.println("Data saved successfully.");
-                        System.out.println("Goodbye!");
+                        if(customers.saveToFile() && orders.saveToFile()) {
+                            System.out.println("Data saved successfully.");
+                            System.out.println("Goodbye!");
+                            checkSave = true;
+                        }
                     } else {
                         System.out.println("Data not saved.");
                         System.out.println("Goodbye!");
