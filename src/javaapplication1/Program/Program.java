@@ -14,13 +14,14 @@ public class Program {
         SetMenuList setMenu = new SetMenuList();
 
         Menu menu = new Menu();
+        customers.readFromFile();
         while(true) {
             int choose = menu.showMenu();
             switch (choose) {
                 case 1:
-                    customers.readFromFile();
+
                     customers.showAll();
-                    System.out.println("Register new customer");
+                    System.out.println("---------------Register new customer---------------");
                     String id = Inputer.inputString("^[CKG][0-9]{3}$", "Enter customer ID: ");
                     System.out.print("Enter customer name: ");
                     String name = Inputer.inputString("^[A-Za-z ]+$", "");
@@ -34,11 +35,26 @@ public class Program {
                     //add customer to list
                     customers.addNew(customer);
                     //save customer to file
-                    customers.saveToFile();
+
                     // Register customer
                     break;
                 case 2:
+                    customers.showAll();
+                    System.out.println("---------------Update customer information---------------");
+                    String updateId = Inputer.inputString("^[CKG][0-9]{3}$", "Enter customer ID to update: ");
+                    //check exits
+                    if (!customers.searchByIdReturnBoolean(updateId)) {
+                        System.out.println("Customer not found!!!");
+                        break;
+                    }
+                    //enter filed
+                    String updateName = Inputer.inputString("^[A-Za-z ]+$", "Enter new customer name: ");
+                    String updatePhone = Inputer.inputString("^[0-9]{10}$", "Enter new customer phone: ");
+                    String updateEmail = Inputer.inputString("^[a-zA-Z0-9._%+-]+@gmail\\.com$", "Enter new customer email: ");
+
                     // Update customer information
+                    Customer updateCustomer = new Customer(updateId, updateName, updatePhone, updateEmail);
+                    customers.update(updateCustomer);
                     break;
                 case 3:
                     // Search customer by ID
@@ -66,9 +82,17 @@ public class Program {
                     System.exit(0);
                     return;
             }
-            System.out.printf("Do you want to continue? (Y/N): ");
-            String choice = Inputer.inputString("^[YyNn]$", "");
+            String choice = Inputer.inputString("^[YyNn]$", "Do you want to continue? (Y/N): ");
             if(!choice.equalsIgnoreCase("y")) {
+                String saveChoice = Inputer.inputString("^[YyNn]$", "Do you want to save data to file? (Y/N): ");
+                if(saveChoice.equalsIgnoreCase("y")) {
+                    customers.saveToFile();
+                    System.out.println("Data saved successfully.");
+                    System.out.println("Goodbye!");
+                } else {
+                    System.out.println("Data not saved.");
+                    System.out.println("Goodbye!");
+                }
                 break;
             }
         }
