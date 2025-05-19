@@ -1,13 +1,13 @@
 package javaapplication1.Model;
 
 
-public class Order implements java.io.Serializable{
+public class Order implements java.io.Serializable {
     String orderId;
     Customer customer;
     SetMenu menu;
     int numberOfTable;
     String orderDate;
-    String totalePrice;
+    double totalPrice;
 
     //default constructor
     public Order() {
@@ -16,17 +16,17 @@ public class Order implements java.io.Serializable{
         this.menu = null;
         this.numberOfTable = 0;
         this.orderDate = "";
-        this.totalePrice = "";
+        this.totalPrice = 0.0;
     }
 
     //constructor reference
-    public Order(String orderId, Customer customer, SetMenu menu, int numberOfTable, String orderDate, String totalePrice) {
+    public Order(String orderId, Customer customer, SetMenu menu, int numberOfTable, String orderDate, double totalPrice) {
         this.orderId = orderId;
         this.customer = customer;
         this.menu = menu;
         this.numberOfTable = numberOfTable;
         this.orderDate = orderDate;
-        this.totalePrice = totalePrice;
+        this.totalPrice = totalPrice;
     }
 
     //getters and setters
@@ -71,12 +71,12 @@ public class Order implements java.io.Serializable{
         this.orderDate = orderDate;
     }
 
-    public String getTotalePrice() {
-        return totalePrice;
+    public double getTotalPrice() {
+        return totalPrice;
     }
 
-    public void setTotalePrice(String totalePrice) {
-        this.totalePrice = totalePrice;
+    public void setTotalPrice(double totalPrice) {
+        this.totalPrice = totalPrice;
     }
 
 
@@ -93,7 +93,11 @@ public class Order implements java.io.Serializable{
         System.out.println("| Order date: " + orderDate);
 
         System.out.println("| ----------------------------------------------------------------------");
-        System.out.println("|Total price: " + totalePrice);
+        System.out.println("|Total price: " + totalPrice);
         System.out.println("----------------------------------------------------------------------");
+    }
+
+    public String showOrder() {
+        return String.format("%-8s|%-11s|%-11s|%-11s|%-11.1f|%15d|%-15.1f\t", customer.getId(), orderDate, customer.getId(), menu.getMenuId(), menu.getPrice(), numberOfTable, totalPrice);
     }
 }

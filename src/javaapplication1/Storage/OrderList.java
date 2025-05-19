@@ -22,7 +22,7 @@ public class OrderList extends ArrayList<Order> implements ILists<Order> {
             // Cập nhật thông tin đơn hàng
             search.setNumberOfTable(order.getNumberOfTable());
             search.setOrderDate(order.getOrderDate());
-            search.setTotalePrice(order.getTotalePrice());
+            search.setTotalPrice(order.getNumberOfTable() * order.getMenu().getPrice());
             return true;
         }
         return false;

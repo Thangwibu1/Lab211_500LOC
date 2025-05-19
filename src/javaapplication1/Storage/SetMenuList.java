@@ -21,7 +21,7 @@ public class SetMenuList extends ArrayList<SetMenu> implements ILists<SetMenu> {
     public SetMenu searchById(String id) {
         // Tìm kiếm thực đơn theo ID
         for (SetMenu setMenu : this) {
-            if (setMenu.getMenuId().equals(id)) {
+            if (id.equalsIgnoreCase(setMenu.getMenuId())) {
                 return setMenu;
             }
         }
@@ -31,12 +31,13 @@ public class SetMenuList extends ArrayList<SetMenu> implements ILists<SetMenu> {
     // Tìm kiếm thực đơn theo ID nhưng trả về boolean
     public boolean searchByIdReturnBoolean(String id) {
         for (SetMenu setMenu : this) {
-            if (setMenu.getMenuId().equals(id)) {
+            if (id.equalsIgnoreCase(setMenu.getMenuId())) {
                 return true;
             }
         }
         return false;
     }
+
     @Override
     public void showAll() {
         // Hiển thị danh sách thực đơn
@@ -53,7 +54,7 @@ public class SetMenuList extends ArrayList<SetMenu> implements ILists<SetMenu> {
     }
 
     @Override
-    public boolean readFromFile() {
+    public boolean readFromFile() throws IOException {
         String csvFile = "FeastMenu.csv";
         File file = new File(csvFile);
         // Kiểm tra xem file có tồn tại không
@@ -62,32 +63,27 @@ public class SetMenuList extends ArrayList<SetMenu> implements ILists<SetMenu> {
             return false;
         }
         // Đọc file CSV
+        FileReader fr = new FileReader(file);
+        BufferedReader br = new BufferedReader(fr);
+        String line = null;
         this.clear();
-        try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
-            // Đọc tiêu đề nếu có
-
-            // Đọc từng dòng dữ liệu
-            while(true) {
-                String line = br.readLine();
-                if (line == null) {
-                    break;
-                }
-                String[] data = line.split("[,]");
-                String menuId = data[0].trim();
-                String menuName = data[1].trim();
-                double price = Double.parseDouble(data[2].trim());
-                String ingredients = data[3].trim();
-
-                this.add(new SetMenu(menuId, menuName, price, ingredients));
+        while (true) {
+            line = br.readLine();
+            if (line == null) {
+                break;
             }
-            // Đóng file
-            br.close();
+            String[] data = line.split(",");
+            String menuID = data[0].trim();
+            String menuName = data[1].trim();
+            double price = Double.parseDouble(data[2].trim());
+            String ingredients = data[3].trim();
 
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
+            SetMenu setMenu = new SetMenu(menuID, menuName, price, ingredients);
+            this.add(setMenu);
         }
-        return false;
+
+
+        return true;
     }
 
     @Override

@@ -103,6 +103,19 @@ public class CustomerList extends ArrayList<Customer> implements ILists<Customer
         return check;
     }
 
+    //search by name and return arraylist
+    public ArrayList<Customer> searchByName(String name) {
+        //Khởi tạo list để trả về
+        ArrayList<Customer> result = new ArrayList<>();
+        for (Customer customer : this) {
+            //Tách tên thành mảng
+            String[] fName = customer.getName().split(",");
+            if (fName[0].trim().equalsIgnoreCase(name.trim())) {
+                result.add(customer);
+            }
+        }
+        return result;
+    }
     @Override
     public boolean saveToFile() {
         boolean check = false;

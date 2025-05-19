@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Program {
@@ -26,10 +27,10 @@ public class Program {
     //create variable for order
     static String orderId;
     static String customerId;
-    static String setMenuId;
+    static String setMenuId = null;
     static int numberOfTable;
     static String date;
-    static String totalPrice;
+    static double totalPrice;
     static Customer orderCustomer;
     static SetMenu orderSetMenu;
 
@@ -52,7 +53,7 @@ public class Program {
                     System.out.println("---------------Register new customer---------------");
                     //enter identification
                     while (true) {
-                        id = Inputer.inputString("^[CKG][0-9]{3}$", "Enter customer ID: ");
+                        id = Inputer.inputString("^[CKG][0-9]{4}$", "Enter customer ID: ");
                         //check exits
                         if (customers.searchByIdReturnBoolean(id)) {
                             System.out.println("Customer ID already exists!!!");
@@ -61,15 +62,13 @@ public class Program {
                         break;
                     }
                     //enter name
-                    while (true) {
-                        name = Inputer.inputString("^[A-Za-z ]+$", "Enter customer name: ");
-                        if (name.length() < 2 || name.length() > 25) {
-                            System.out.println("Name must be between 2 and 25 characters!");
-                            continue;
-                        } else {
-                            break;
-                        }
-                    }
+                    //handle f_name
+                    String firstName = Inputer.inputString("^[A-Za-z ]+$", "Enter customer first name: ");
+                    //handle l_name
+                    String lastName = Inputer.inputString("^[A-Za-z ]+$", "Enter customer last name: ");
+                    //handle full name
+                    name = firstName + ", " + lastName;
+
                     System.out.print("Enter customer phone: ");
                     phone = Inputer.inputString("^0[0-9]{9}$", "");
                     System.out.print("Enter customer email: ");
@@ -93,6 +92,7 @@ public class Program {
                         break;
                     }
                     //enter filed
+                    //handle name
                     while (true) {
                         name = Inputer.inputString("^[A-Za-z ]+$", "Enter customer name: ");
                         if (name.length() < 2 || name.length() > 25) {
@@ -112,19 +112,21 @@ public class Program {
                     customers.update(customer);
 
                     //free memory
-                    updateId = name = phone = email = null;
+                    updateId = name = phone = email = firstName = lastName = null;
                     break;
                 case 3:
-                    // Search customer by ID
+                    // Search customer by name
                     customers.showAll();
-                    id = Inputer.inputString("^[CKG][0-9]{3}$", "Enter customer ID to search: ");
+                    firstName = Inputer.inputString("^[A-Za-z ]+$", "Enter customer name to search: ");
                     //check exits
-                    if (!customers.searchByIdReturnBoolean(id)) {
+                    ArrayList<Customer> searchCustomer = customers.searchByName(firstName);
+                    if (searchCustomer.size() == 0) {
                         System.out.println("Customer not found!!!");
                         break;
-                    } else {
-                        Customer customerFound = customers.searchById(id);
-                        System.out.println(customerFound);
+                    }
+                    System.out.println("-----------------------------------------------------------------");
+                    for (Customer customer1 : searchCustomer) {
+                        System.out.println(customer1);
                     }
                     break;
                 case 4:
@@ -144,7 +146,7 @@ public class Program {
                     //handle customer ID
                     customers.showAll();
                     while (true) {
-                        customerId = Inputer.inputString("^[CKG][0-9]{3}$", "Enter customer ID: ");
+                        customerId = Inputer.inputString("^[CKG][0-9]{4}$", "Enter customer ID: ");
                         //check exits
                         if (!customers.searchByIdReturnBoolean(customerId)) {
                             System.out.println("Customer not found!!!");
@@ -159,7 +161,7 @@ public class Program {
                     while (true) {
                         setMenuId = Inputer.inputString("^PW[0-9]{3}$", "Enter set menu ID: ");
                         //check exits
-                        if (!setMenu.searchByIdReturnBoolean(setMenuId)) {
+                        if (setMenu.searchById(setMenuId) == null) {
                             System.out.println("Set menu not found!!!");
                             continue;
                         }
@@ -183,7 +185,7 @@ public class Program {
                     }
 
                     //handle total price
-                    totalPrice = numberOfTable * orderSetMenu.getPrice() + "";
+                    totalPrice = numberOfTable * orderSetMenu.getPrice();
                     //create order
                     order = new Order(orderId, orderCustomer, orderSetMenu, numberOfTable, date, totalPrice);
                     //add order to list
@@ -191,7 +193,8 @@ public class Program {
                     //free memory
                     orderId = customerId = setMenuId = null;
                     numberOfTable = 0;
-                    date = totalPrice = null;
+                    totalPrice = 0.0;
+                    date = null;
 
                     break;
                 case 6:
@@ -222,7 +225,8 @@ public class Program {
                         }
                     }
                     //handle total price
-                    totalPrice = numberOfTable * setMenuUpdate.getPrice() + "";
+
+                    totalPrice = setMenuUpdate.getPrice() * numberOfTable;
                     //create order
                     order = new Order(updateOrderId, customerUpdate, setMenuUpdate, numberOfTable, date, totalPrice);
                     //update order to list
@@ -230,7 +234,8 @@ public class Program {
                     //free memory
                     updateOrderId = customerId = setMenuId = null;
                     numberOfTable = 0;
-                    date = totalPrice = null;
+                    date = null;
+                    totalPrice = 0.0;
                     break;
                 case 7:
                     customers.saveToFile();
@@ -241,11 +246,17 @@ public class Program {
                     // Save data to file
                     break;
                 case 8:
-                    String listChoice = Inputer.inputString("^[OoCc]$", "Do you want to display customer list (C) or order list (O)? ");
-                    if (listChoice.equalsIgnoreCase("c")) {
-                        customers.showAll();
-                    } else if (listChoice.equalsIgnoreCase("o")) {
-                        orders.showAll();
+                    String chooseList = Inputer.inputString("^[OoCc]$", "Choose list to display (C for Customer, O for Order): ");
+                    if (chooseList.equalsIgnoreCase("c")) {
+                        for (Order order1 : orders) {
+                            System.out.println(order1.getCustomer());;
+                        }
+                    } else if (chooseList.equalsIgnoreCase("o")) {
+                        System.out.println("---------------------Order List---------------------");
+                        System.out.println("Order ID|Event Date\t|Customer ID|Set Menu ID|Price\t\t|Number of Table|Total Price");
+                        for (Order order1 : orders) {
+                            System.out.println(order1.showOrder());;
+                        }
                     }
                     // Display Customer or Order lists
                     break;
