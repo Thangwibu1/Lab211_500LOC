@@ -19,7 +19,7 @@ import java.util.Date;
 public class Program {
     //create global variables
     static String id;
-    static String name;
+    static String name, firstName, lastName;
     static String phone;
     static String email;
 
@@ -63,16 +63,14 @@ public class Program {
                     }
                     //enter name
                     //handle f_name
-                    String firstName = Inputer.inputString("^[A-Za-z ]+$", "Enter customer first name: ");
+                    firstName = Inputer.inputString("^[A-Za-z ]+$", "Enter customer first name: ");
                     //handle l_name
-                    String lastName = Inputer.inputString("^[A-Za-z ]+$", "Enter customer last name: ");
+                    lastName = Inputer.inputString("^[A-Za-z ]+$", "Enter customer last name: ");
                     //handle full name
                     name = firstName + ", " + lastName;
 
-                    System.out.print("Enter customer phone: ");
-                    phone = Inputer.inputString("^0[0-9]{9}$", "");
-                    System.out.print("Enter customer email: ");
-                    email = Inputer.inputString("^[a-zA-Z0-9._%+-]+@gmail\\.com$", "");
+                    phone = Inputer.inputPhone("Enter customer phone: ");
+                    email = Inputer.inputEmail("Enter customer email: ");
 
                     //new customer
                     Customer customer = new Customer(id, name, phone, email);
@@ -83,36 +81,37 @@ public class Program {
                     // Register customer
                     break;
                 case 2:
-                    customers.showAll();
-                    System.out.println("---------------Update customer information---------------");
-                    String updateId = Inputer.inputString("^[CKG][0-9]{3}$", "Enter customer ID to update: ");
-                    //check exits
-                    if (!customers.searchByIdReturnBoolean(updateId)) {
-                        System.out.println("Customer not found!!!");
-                        break;
-                    }
-                    //enter filed
-                    //handle name
                     while (true) {
-                        name = Inputer.inputString("^[A-Za-z ]+$", "Enter customer name: ");
-                        if (name.length() < 2 || name.length() > 25) {
-                            System.out.println("Name must be between 2 and 25 characters!");
-                            continue;
-                        } else {
+                        customers.showAll();
+                        System.out.println("---------------Update customer information---------------");
+                        String updateId = Inputer.inputString("^[CKG][0-9]{4}$", "Enter customer ID to update: ");
+                        //check exits
+                        if (!customers.searchByIdReturnBoolean(updateId)) {
+                            System.out.println("This customer does not exits!!!");
+                            break;
+                        }
+                        //enter filed
+                        //handle name
+                        firstName = Inputer.inputString("^[A-Za-z ]+$", "Enter customer first name: ");
+                        //handle l_name
+                        lastName = Inputer.inputString("^[A-Za-z ]+$", "Enter customer last name: ");
+                        name = firstName + ", " + lastName;
+
+                        phone = Inputer.inputPhone("Enter customer update phone: ");
+                        email = Inputer.inputEmail("Enter customer update email: ");
+
+                        // Update customer information
+                        customer = new Customer(updateId, name, phone, email);
+                        customers.update(customer);
+
+                        //free memory
+                        updateId = name = phone = email = firstName = lastName = null;
+
+                        String choice = Inputer.inputString("^[YyNn]$", "Do you want to update another customer? (Y/N): ");
+                        if (!choice.equalsIgnoreCase("y")) {
                             break;
                         }
                     }
-                    System.out.print("Enter customer phone: ");
-                    phone = Inputer.inputString("^0[0-9]{9}$", "");
-                    System.out.print("Enter customer email: ");
-                    email = Inputer.inputString("^[a-zA-Z0-9._%+-]+@gmail\\.com$", "");
-
-                    // Update customer information
-                    customer = new Customer(updateId, name, phone, email);
-                    customers.update(customer);
-
-                    //free memory
-                    updateId = name = phone = email = firstName = lastName = null;
                     break;
                 case 3:
                     // Search customer by name
@@ -121,7 +120,7 @@ public class Program {
                     //check exits
                     ArrayList<Customer> searchCustomer = customers.searchByName(firstName);
                     if (searchCustomer.size() == 0) {
-                        System.out.println("Customer not found!!!");
+                        System.out.println("No one matches the search criteria!!!");
                         break;
                     }
                     System.out.println("-----------------------------------------------------------------");
@@ -137,11 +136,7 @@ public class Program {
                 case 5:
                     //create orderId
                     orders.showAll();
-                    Date currentDate = new Date();
-                    System.out.println("---------------Place a feast order---------------");
-                    SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyyHHmmss");
-                    String formattedDate = sdf.format(currentDate);
-                    orderId = formattedDate;
+
 
                     //handle customer ID
                     customers.showAll();
@@ -186,6 +181,17 @@ public class Program {
 
                     //handle total price
                     totalPrice = numberOfTable * orderSetMenu.getPrice();
+                    //check duplicate
+                    if (orders.checkDuplicate(name, date, setMenuId)) {
+                        System.out.println("Dupliacate data!!!");
+                        break;
+                    }
+                    //create order ID
+                    Date currentDate = new Date();
+                    System.out.println("---------------Place a feast order---------------");
+                    SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyyHHmmss");
+                    String formattedDate = sdf.format(currentDate);
+                    orderId = formattedDate;
                     //create order
                     order = new Order(orderId, orderCustomer, orderSetMenu, numberOfTable, date, totalPrice);
                     //add order to list
@@ -199,91 +205,127 @@ public class Program {
                     break;
                 case 6:
                     // Update order information
-                    orders.showAll();
-                    String updateOrderId = Inputer.inputString("^[0-9]{14}$", "Enter order ID to update: ");
-                    //check exits
-                    if (!orders.searchByIdReturnBoolean(updateOrderId)) {
-                        System.out.println("Order not found!!!");
-                        break;
-                    }
-                    //handle customer ID
-                    Customer customerUpdate = orders.searchById(updateOrderId).getCustomer();
-                    //handle set menu ID
-                    SetMenu setMenuUpdate = orders.searchById(updateOrderId).getMenu();
-                    //handle number of table
-                    numberOfTable = Inputer.inputInt("^[1-9][0-9]*$", "Enter number of table update: ");
-                    //handle order date
-                    LocalDate newDate = LocalDate.now();
                     while (true) {
-                        LocalDate futureDate = LocalDate.parse(Inputer.inputString("^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$", "Enter order date (yyyy-MM-dd): "));
-                        if (futureDate.isBefore(newDate)) {
-                            System.out.println("Order date must be in the future!!!");
-                            continue;
-                        } else {
-                            date = futureDate.toString();
+
+                        orders.showAll();
+                        String updateOrderId = Inputer.inputString("^[0-9]{14}$", "Enter order ID to update: ");
+                        //check exits
+                        if (!orders.searchByIdReturnBoolean(updateOrderId)) {
+                            System.out.println("This Order does not exist!!!");
+                            break;
+                        }
+                        //handle customer ID
+                        Customer customerUpdate = orders.searchById(updateOrderId).getCustomer();
+                        //handle set menu ID
+                        String menuId = Inputer.inputString("^PW[0-9]{3}$", "Enter set menu ID to update: ");
+                        //check exits
+                        while (true) {
+                            if (setMenu.searchById(menuId) == null) {
+                                System.out.println("Set menu not found!!!");
+                                continue;
+                            }
+
+                            break;
+                        }
+                        SetMenu setMenuUpdate = setMenu.searchById(menuId);
+                        //handle number of table
+                        numberOfTable = Inputer.inputInt("^[1-9][0-9]*$", "Enter number of table update: ");
+                        //handle order date
+                        LocalDate newDate = LocalDate.now();
+                        while (true) {
+                            LocalDate futureDate = LocalDate.parse(Inputer.inputString("^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$", "Enter order date (yyyy-MM-dd): "));
+                            if (futureDate.isBefore(newDate)) {
+                                System.out.println("Order date must be in the future!!!");
+                                continue;
+                            } else {
+                                date = futureDate.toString();
+                                break;
+                            }
+                        }
+                        //handle total price
+
+                        totalPrice = setMenuUpdate.getPrice() * numberOfTable;
+                        //create order
+                        order = new Order(updateOrderId, customerUpdate, setMenuUpdate, numberOfTable, date, totalPrice);
+                        //update order to list
+                        orders.update(order);
+                        //free memory
+                        updateOrderId = customerId = setMenuId = null;
+                        numberOfTable = 0;
+                        date = null;
+                        totalPrice = 0.0;
+                        String choice = Inputer.inputString("^[YyNn]$", "Do you want to update another order? (Y/N): ");
+                        if (!choice.equalsIgnoreCase("y")) {
                             break;
                         }
                     }
-                    //handle total price
-
-                    totalPrice = setMenuUpdate.getPrice() * numberOfTable;
-                    //create order
-                    order = new Order(updateOrderId, customerUpdate, setMenuUpdate, numberOfTable, date, totalPrice);
-                    //update order to list
-                    orders.update(order);
-                    //free memory
-                    updateOrderId = customerId = setMenuId = null;
-                    numberOfTable = 0;
-                    date = null;
-                    totalPrice = 0.0;
                     break;
                 case 7:
                     customers.saveToFile();
                     orders.saveToFile();
                     System.out.println("Data saved successfully.");
-                    System.out.println("Goodbye!");
                     checkSave = true;
                     // Save data to file
                     break;
                 case 8:
                     String chooseList = Inputer.inputString("^[OoCc]$", "Choose list to display (C for Customer, O for Order): ");
                     if (chooseList.equalsIgnoreCase("c")) {
-                        for (Order order1 : orders) {
-                            System.out.println(order1.getCustomer());;
+                        if (orders.size() == 0) {
+                            System.out.println("Do not have any customer information.");
+                        } else {
+                            System.out.println("----------------------------------------------------------------------");
+                            System.out.println("Code \t|Name\t\t\t\t\t\t|Phone\t\t|Email");
+                            System.out.println("----------------------------------------------------------------------");
+                            for (Order order1 : orders) {
+                                System.out.println(order1.getCustomer());
+
+                            }
                         }
                     } else if (chooseList.equalsIgnoreCase("o")) {
-                        System.out.println("---------------------Order List---------------------");
+                        System.out.println("----------------------------------------------------------------------------------------------------------------");
                         System.out.println("Order ID|Event Date\t|Customer ID|Set Menu ID|Price\t\t|Number of Table|Total Price");
                         for (Order order1 : orders) {
-                            System.out.println(order1.showOrder());;
+                            System.out.println(order1.showOrder());
+                            ;
                         }
                     }
                     // Display Customer or Order lists
                     break;
                 case 0:
                     // Exit
-                    System.out.println("Goodbye!");
-                    System.exit(0);
+                    if (!checkSave) {
+                        String saveChoice = Inputer.inputString("^[YyNn]$", "Do you want to save data to file? (Y/N): ");
+                        if (saveChoice.equalsIgnoreCase("y")) {
+                            if (customers.saveToFile() && orders.saveToFile()) {
+                                System.out.println("Data saved successfully.");
+                                System.out.println("Goodbye!");
+                                checkSave = true;
+                            }
+                        } else {
+                            System.out.println("Data not saved.");
+                            System.out.println("Goodbye!");
+                        }
+                    }
                     return;
             }
-            String choice = Inputer.inputString("^[YyNn]$", "Do you want to continue? (Y/N): ");
-            if (!choice.equalsIgnoreCase("y")) {
-                if (!checkSave) {
-                    String saveChoice = Inputer.inputString("^[YyNn]$", "Do you want to save data to file? (Y/N): ");
-                    if (saveChoice.equalsIgnoreCase("y")) {
-                        if(customers.saveToFile() && orders.saveToFile()) {
-                            System.out.println("Data saved successfully.");
-                            System.out.println("Goodbye!");
-                            checkSave = true;
-                        }
-                    } else {
-                        System.out.println("Data not saved.");
-                        System.out.println("Goodbye!");
-                    }
-                    break;
-                }
-                break;
-            }
+//            String choice = Inputer.inputString("^[YyNn]$", "Do you want to continue? (Y/N): ");
+//            if (!choice.equalsIgnoreCase("y")) {
+//                if (!checkSave) {
+//                    String saveChoice = Inputer.inputString("^[YyNn]$", "Do you want to save data to file? (Y/N): ");
+//                    if (saveChoice.equalsIgnoreCase("y")) {
+//                        if(customers.saveToFile() && orders.saveToFile()) {
+//                            System.out.println("Data saved successfully.");
+//                            System.out.println("Goodbye!");
+//                            checkSave = true;
+//                        }
+//                    } else {
+//                        System.out.println("Data not saved.");
+//                        System.out.println("Goodbye!");
+//                    }
+//                    break;
+//                }
+//                break;
+//            }
         }
     }
 }

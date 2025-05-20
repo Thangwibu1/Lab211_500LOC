@@ -25,6 +25,7 @@ public class CustomerList extends ArrayList<Customer> implements ILists<Customer
             search.setName(customer.getName());
             search.setPhone(customer.getPhone());
             search.setEmail(customer.getEmail());
+            System.out.println("Update customer successfully!");
             return true;
         }
         return false;
@@ -53,9 +54,11 @@ public class CustomerList extends ArrayList<Customer> implements ILists<Customer
     @Override
     public void showAll() {
         if (this.size() == 0) {
-            System.out.println("Danh sách khách hàng rỗng.");
+            System.out.println("Do not have any customer information.");
         } else {
-            System.out.println("Danh sách khách hàng:");
+            System.out.println("----------------------------------------------------------------------");
+            System.out.println("Code \t|Name\t\t\t\t\t\t|Phone\t\t|Email");
+            System.out.println("----------------------------------------------------------------------");
             for (Customer customer : this) {
                 System.out.println(customer);
             }

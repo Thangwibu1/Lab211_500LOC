@@ -20,6 +20,7 @@ public class OrderList extends ArrayList<Order> implements ILists<Order> {
         Order search = searchById(order.getOrderId());
         if (search != null) {
             // Cập nhật thông tin đơn hàng
+            search.setMenu(order.getMenu());
             search.setNumberOfTable(order.getNumberOfTable());
             search.setOrderDate(order.getOrderDate());
             search.setTotalPrice(order.getNumberOfTable() * order.getMenu().getPrice());
@@ -131,5 +132,20 @@ public class OrderList extends ArrayList<Order> implements ILists<Order> {
         }
 
         return check;
+    }
+
+    //check duplicate
+    public boolean checkDuplicate(String name, String date, String menuID) {
+        for (Order order : this) {
+            if (order.getOrderId().equals(name)) {
+                if (order.getOrderDate().equals(date)) {
+                    if (order.getMenu().getMenuId().equals(menuID)) {
+                        System.out.println("Duplicate order found: " + order.getOrderId());
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 }
