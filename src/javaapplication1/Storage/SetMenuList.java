@@ -40,6 +40,7 @@ public class SetMenuList extends ArrayList<SetMenu> implements ILists<SetMenu> {
 
     @Override
     public void showAll() {
+        int count = 0;
         // Hiển thị danh sách thực đơn
         if (this.size() == 0) {
             System.out.println("Empy list of Feast Menu.");
@@ -48,6 +49,10 @@ public class SetMenuList extends ArrayList<SetMenu> implements ILists<SetMenu> {
             System.out.println("List for Feast Menu ordering party");
             System.out.println("-----------------------------------------------------------------");
             for (SetMenu setMenu : this) {
+                if(count == 0) {
+                    count++;
+                    continue;
+                }
                 setMenu.showInfo();
             }
         }

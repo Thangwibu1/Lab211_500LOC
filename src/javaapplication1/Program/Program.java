@@ -180,20 +180,21 @@ public class Program {
                     }
 
                     //handle total price
-                    totalPrice = numberOfTable * orderSetMenu.getPrice();
+                    totalPrice = (double)numberOfTable * orderSetMenu.getPrice();
                     //check duplicate
                     if (orders.checkDuplicate(name, date, setMenuId)) {
                         System.out.println("Dupliacate data!!!");
                         break;
                     }
                     //create order ID
-                    Date currentDate = new Date();
-                    System.out.println("---------------Place a feast order---------------");
-                    SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyyHHmmss");
-                    String formattedDate = sdf.format(currentDate);
+                    Date currentDate = new Date(); //Lấy ngày tháng, gờ phút s hiện tại
+                    SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyyHHmmss"); //tạo ra format
+                    String formattedDate = sdf.format(currentDate); //biến ngày tháng hiện tại thành chuỗi
                     orderId = formattedDate;
                     //create order
                     order = new Order(orderId, orderCustomer, orderSetMenu, numberOfTable, date, totalPrice);
+                    //display order
+                    order.showInfo();
                     //add order to list
                     orders.addNew(order);
                     //free memory
@@ -283,7 +284,7 @@ public class Program {
                         }
                     } else if (chooseList.equalsIgnoreCase("o")) {
                         System.out.println("----------------------------------------------------------------------------------------------------------------");
-                        System.out.println("Order ID|Event Date\t|Customer ID|Set Menu ID|Price\t\t|Number of Table|Total Price");
+                        System.out.println("Order ID\t\t|Event Date\t|Customer ID|Set Menu ID|Price\t\t|Number of Table|Total Price");
                         for (Order order1 : orders) {
                             System.out.println(order1.showOrder());
                             ;

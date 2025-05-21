@@ -93,11 +93,11 @@ public class Order implements java.io.Serializable {
         System.out.println("| Order date: " + orderDate);
 
         System.out.println("| ----------------------------------------------------------------------");
-        System.out.println("|Total price: " + totalPrice);
+        System.out.printf("|Total price: %.0f\n", totalPrice);
         System.out.println("----------------------------------------------------------------------");
     }
 
     public String showOrder() {
-        return String.format("%-8s|%-11s|%-11s|%-11s|%-11.1f|%15d|%-15.1f\t", customer.getId(), orderDate, customer.getId(), menu.getMenuId(), menu.getPrice(), numberOfTable, totalPrice);
+        return String.format("%-16s|%-11s|%-11s|%-11s|%-11.1f|%15d|%-15.0f\t", orderId, orderDate, customer.getId(), menu.getMenuId(), menu.getPrice(), numberOfTable, totalPrice);
     }
 }

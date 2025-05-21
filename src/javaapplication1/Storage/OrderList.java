@@ -137,15 +137,14 @@ public class OrderList extends ArrayList<Order> implements ILists<Order> {
     //check duplicate
     public boolean checkDuplicate(String name, String date, String menuID) {
         for (Order order : this) {
-            if (order.getOrderId().equals(name)) {
+            if (order.getCustomer().getName().equals(name)) {
                 if (order.getOrderDate().equals(date)) {
                     if (order.getMenu().getMenuId().equals(menuID)) {
-                        System.out.println("Duplicate order found: " + order.getOrderId());
-                        return false;
+                        return true;
                     }
                 }
             }
         }
-        return true;
+        return false;
     }
 }

@@ -58,7 +58,7 @@ public class Customer implements java.io.Serializable {
 
     @Override
     public String toString() {
-        return String.format("%s\t|%-30s\t|%s\t|%s", id, name, phone, email);
+        return String.format("%s\t|%-26s\t|%s\t|%s", id, name, phone, email);
     }
 
     //show information
