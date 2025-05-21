@@ -147,4 +147,16 @@ public class OrderList extends ArrayList<Order> implements ILists<Order> {
         }
         return false;
     }
+
+    //Update customer
+    public boolean updateCustomer(Customer customer) {
+        boolean check = false;
+        for (Order order : this) {
+            if (order.getCustomer().getId().equals(customer.getId())) {
+                order.setCustomer(customer);
+                check = true;
+            }
+        }
+        return check;
+    }
 }
