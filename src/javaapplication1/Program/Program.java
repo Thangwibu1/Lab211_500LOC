@@ -15,6 +15,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Program {
     //create global variables
@@ -102,6 +104,10 @@ public class Program {
 
                         // Update customer information
                         customer = new Customer(updateId, name, phone, email);
+                        //check customer is exits in order list
+                        if (orders.updateCustomer(customer)) {
+                            System.out.println("Customer information in order list has been updated.");
+                        }
                         customers.update(customer);
 
                         //free memory
@@ -277,10 +283,11 @@ public class Program {
                             System.out.println("----------------------------------------------------------------------");
                             System.out.println("Code \t|Name\t\t\t\t\t\t|Phone\t\t|Email");
                             System.out.println("----------------------------------------------------------------------");
+                            Set<Customer> customersSet = new HashSet<>();
                             for (Order order1 : orders) {
-                                System.out.println(order1.getCustomer());
-
+                                customersSet.add(order1.getCustomer());
                             }
+                            customersSet.forEach(customer1 -> System.out.println(customer1));
                         }
                     } else if (chooseList.equalsIgnoreCase("o")) {
                         System.out.println("----------------------------------------------------------------------------------------------------------------");
@@ -306,6 +313,8 @@ public class Program {
                             System.out.println("Data not saved.");
                             System.out.println("Goodbye!");
                         }
+                    } else {
+                        System.out.println("Goodbye!");
                     }
                     return;
             }
